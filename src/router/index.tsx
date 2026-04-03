@@ -3,6 +3,7 @@ import LoginPage from "../pages/loginPage";
 import RegisterPage from "../pages/registerPage";
 import AppLayout from "../pages/appLayout";
 import ProtectedRoute from "../components/protectedRoute";
+import AssetsDashboard from "../features/assets/pages/AssetsDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -20,5 +21,15 @@ export const router = createBrowserRouter([
         <AppLayout />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        index: true,
+        element: <div>Dashboard Home</div>,
+      },
+      {
+        path: "assets",
+        element: <AssetsDashboard />,
+      },
+    ],
   },
 ]);
