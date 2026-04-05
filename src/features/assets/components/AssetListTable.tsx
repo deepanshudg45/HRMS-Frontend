@@ -1,8 +1,8 @@
-import { Asset } from "../types/assets.types";
+import { AssetSummary } from "../types/assets.types";
 import AssetStatusBadge from "./AssetStatusBadge";
 
 interface AssetListTableProps {
-  assets: Asset[];
+  assets: AssetSummary[];
 }
 
 const AssetListTable = ({ assets }: AssetListTableProps) => {
@@ -14,9 +14,9 @@ const AssetListTable = ({ assets }: AssetListTableProps) => {
             <th className="p-3">Asset Code</th>
             <th className="p-3">Asset Type</th>
             <th className="p-3">Asset Name</th>
-            <th className="p-3">Brand</th>
+            <th className="p-3">Serial No</th>
             <th className="p-3">Status</th>
-            <th className="p-3">Location</th>
+            <th className="p-3">Category</th>
             <th className="p-3">Assigned To</th>
           </tr>
         </thead>
@@ -24,15 +24,15 @@ const AssetListTable = ({ assets }: AssetListTableProps) => {
         <tbody>
           {assets.map((asset) => (
             <tr key={asset.id} className="border-t">
-              <td className="p-3">{asset.asset_code}</td>
-              <td className="p-3">{asset.asset_type}</td>
-              <td className="p-3">{asset.asset_name}</td>
-              <td className="p-3">{asset.brand}</td>
+              <td className="p-3">{asset.code}</td>
+              <td className="p-3">{asset.type}</td>
+              <td className="p-3">{asset.name}</td>
+              <td className="p-3">{asset.serialNo || "-"}</td>
               <td className="p-3">
                 <AssetStatusBadge status={asset.status} />
               </td>
-              <td className="p-3">{asset.location}</td>
-              <td className="p-3">{asset.assigned_to?.name || "-"}</td>
+              <td className="p-3">{asset.category}</td>
+              <td className="p-3">-</td>
             </tr>
           ))}
 

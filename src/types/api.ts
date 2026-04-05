@@ -1,18 +1,15 @@
-// Generic API response
 export interface StandardResponse<T> {
   success: boolean;
-  message: string;
-  data: T;
+  message?: string;
+  data?: T;
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+  };
 }
 
-// Pagination info
-export interface Pagination {
-  page: number;
-  pageSize: number;
-  total: number;
-}
-
-// Error format
 export interface AppError {
   message: string;
   code?: string;

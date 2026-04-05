@@ -1,22 +1,25 @@
 import axios from "axios";
 
-// Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
 });
 
-// ✅ Add token automatically to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
+  const role = localStorage.getItem("role") ?? import.meta.env.VITE_EMPLOYEE_ROLE ?? "HR";
+  const employeeId =
+    localStorage.getItem("employeeId") ?? import.meta.env.VITE_EMPLOYEE_ID ?? "hr-admin";
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  config.headers["X-Role"] = role;
+  config.headers["X-Employee-ID"] = employeeId;
+
   return config;
 });
 
-// ✅ Handle 401 error (token expired)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -24,22 +27,18 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
 
-        // Call refresh API
         const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
+          `${import.meta.env.VITE_API_URL ?? "http://localhost:3000"}/auth/refresh`,
           { refreshToken }
         );
 
         const newAccessToken = res.data.accessToken;
 
-        // Save new token
         localStorage.setItem("accessToken", newAccessToken);
-
-        // Retry original request
         error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+
         return api(error.config);
-      } catch (err) {
-        // If refresh fails → logout
+      } catch {
         localStorage.clear();
         window.location.href = "/login";
       }

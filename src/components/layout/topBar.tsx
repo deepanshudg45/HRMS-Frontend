@@ -2,24 +2,21 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 
 const Topbar = () => {
-  const { logout } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
 
   return (
-    <div className="h-[64px] bg-white shadow flex items-center justify-between px-4">
-      
+    <div className="flex h-[64px] items-center justify-between bg-white px-4 shadow">
       <h3>Dashboard</h3>
 
       <div className="flex items-center gap-4">
-        
-        {/* Notification placeholder */}
-        <button>🔔</button>
+        <button type="button">Notifications</button>
 
-        {/* User menu */}
         <div>
-          <button>👤</button>
-          <button onClick={logout}>Logout</button>
+          <button type="button">Profile</button>
+          <button type="button" onClick={() => auth?.logout()}>
+            Logout
+          </button>
         </div>
-
       </div>
     </div>
   );

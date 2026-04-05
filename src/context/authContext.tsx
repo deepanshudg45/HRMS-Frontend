@@ -1,44 +1,87 @@
-import { createContext, useState } from "react";
-import api from "../lib/api";
+import { createContext, useMemo, useState } from "react";
 
-export const AuthContext = createContext<any>(null);
+type LoginPayload = {
+  email: string;
+  password: string;
+};
 
-export const AuthProvider = ({ children }: any) => {
-  const [employee, setEmployee] = useState(null);
-  const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
-  const [role, setRole] = useState(null);
+type Employee = {
+  email: string;
+  employeeId: string;
+};
 
-  const login = async (data: any) => {
-    const res = await api.post("/auth/login", data);
+type AuthContextValue = {
+  employee: Employee | null;
+  accessToken: string | null;
+  role: string | null;
+  login: (data: LoginPayload) => Promise<void>;
+  logout: () => void;
+  refreshToken: () => Promise<void>;
+};
 
-    localStorage.setItem("accessToken", res.data.accessToken);
-    localStorage.setItem("refreshToken", res.data.refreshToken);
+const initialRole = localStorage.getItem("role") ?? import.meta.env.VITE_EMPLOYEE_ROLE ?? "HR";
+const initialEmployeeId =
+  localStorage.getItem("employeeId") ?? import.meta.env.VITE_EMPLOYEE_ID ?? "hr-admin";
+const initialEmployeeEmail = localStorage.getItem("employeeEmail") ?? "";
 
-    setAccessToken(res.data.accessToken);
-    setEmployee(res.data.employee);
-    setRole(res.data.role);
+export const AuthContext = createContext<AuthContextValue | null>(null);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [employee, setEmployee] = useState<Employee | null>(
+    initialEmployeeEmail
+      ? {
+          email: initialEmployeeEmail,
+          employeeId: initialEmployeeId,
+        }
+      : null
+  );
+  const [accessToken, setAccessToken] = useState<string | null>(
+    localStorage.getItem("accessToken")
+  );
+  const [role, setRole] = useState<string | null>(initialRole);
+
+  const login = async (data: LoginPayload) => {
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const employeeId = normalizedEmail.split("@")[0] || initialEmployeeId;
+    const nextRole =
+      normalizedEmail.includes("hr") || normalizedEmail.includes("admin") ? "HR" : "EMPLOYEE";
+    const sessionToken = `local-session-${employeeId}`;
+
+    localStorage.setItem("accessToken", sessionToken);
+    localStorage.setItem("refreshToken", sessionToken);
+    localStorage.setItem("employeeId", employeeId);
+    localStorage.setItem("employeeEmail", normalizedEmail);
+    localStorage.setItem("role", nextRole);
+
+    setAccessToken(sessionToken);
+    setEmployee({
+      email: normalizedEmail,
+      employeeId,
+    });
+    setRole(nextRole);
   };
 
   const logout = () => {
     localStorage.clear();
     setAccessToken(null);
     setEmployee(null);
+    setRole(null);
   };
 
   const refreshToken = async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const existingToken = localStorage.getItem("accessToken");
 
-    const res = await api.post("/auth/refresh", { refreshToken });
+    if (!existingToken) {
+      return;
+    }
 
-    localStorage.setItem("accessToken", res.data.accessToken);
-    setAccessToken(res.data.accessToken);
+    setAccessToken(existingToken);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ employee, accessToken, role, login, logout, refreshToken }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ employee, accessToken, role, login, logout, refreshToken }),
+    [employee, accessToken, role]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

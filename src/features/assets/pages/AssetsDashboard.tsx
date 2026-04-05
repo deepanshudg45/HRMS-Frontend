@@ -6,23 +6,30 @@ import { useAssets } from "../hooks/useAssets";
 
 const statusOptions = [
   { label: "All Status", value: "" },
-  { label: "Available", value: "available" },
-  { label: "Assigned", value: "assigned" },
-  { label: "Maintenance", value: "maintenance" },
+  { label: "Available", value: "AVAILABLE" },
+  { label: "Assigned", value: "ASSIGNED" },
+  { label: "Under Repair", value: "UNDER_REPAIR" },
+  { label: "Retired", value: "RETIRED" },
+  { label: "Lost", value: "LOST" },
 ];
 
 const typeOptions = [
   { label: "All Types", value: "" },
-  { label: "Laptop", value: "laptop" },
-  { label: "Monitor", value: "monitor" },
-  { label: "Phone", value: "phone" },
+  { label: "Laptop", value: "LAPTOP" },
+  { label: "Mobile", value: "MOBILE" },
+  { label: "Desktop", value: "DESKTOP" },
+  { label: "Furniture", value: "FURNITURE" },
+  { label: "Other", value: "OTHER" },
 ];
 
 const categoryOptions = [
   { label: "All Categories", value: "" },
-  { label: "IT", value: "it" },
-  { label: "Office", value: "office" },
-  { label: "Accessories", value: "accessories" },
+  { label: "Laptop", value: "LAPTOP" },
+  { label: "Mobile", value: "MOBILE" },
+  { label: "Desktop", value: "DESKTOP" },
+  { label: "Chair", value: "CHAIR" },
+  { label: "Table", value: "TABLE" },
+  { label: "Other", value: "OTHER" },
 ];
 
 const limit = 10;
@@ -43,8 +50,8 @@ const AssetsDashboard = () => {
     limit,
   });
 
-  const assets = data?.data.items ?? [];
-  const total = data?.data.total ?? 0;
+  const assets = data?.data ?? [];
+  const total = data?.meta?.total ?? 0;
 
   return (
     <div className="space-y-6">
@@ -100,12 +107,7 @@ const AssetsDashboard = () => {
       <div className="space-y-4">
         {isLoading ? <p>Loading assets...</p> : <AssetListTable assets={assets} />}
 
-        <Pagination
-          page={page}
-          total={total}
-          pageSize={limit}
-          onChange={setPage}
-        />
+        <Pagination page={page} total={total} pageSize={limit} onChange={setPage} />
       </div>
 
       <CreateAssetForm />

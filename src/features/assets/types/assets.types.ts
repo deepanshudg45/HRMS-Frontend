@@ -1,18 +1,11 @@
-export interface Asset {
+export interface AssetSummary {
   id: string;
-  asset_code: string;
-  asset_type: string;
-  asset_name: string;
-  brand: string;
-  model?: string;
+  code: string;
+  name: string;
+  serialNo: string;
+  type: string;
+  category: string;
   status: string;
-  location: string;
-  serial_no?: string;
-  assigned_to: {
-    id: string;
-    name: string;
-  } | null;
-  category?: string;
 }
 
 export interface AssetFilters {
@@ -24,24 +17,39 @@ export interface AssetFilters {
   limit?: number;
 }
 
-export interface AssetsListData {
-  items: Asset[];
-  total: number;
-  page: number;
-  limit: number;
+export interface Asset {
+  id: string;
+  assetCode: string;
+  assetName: string;
+  assetType: string;
+  assetCategory: string;
+  status: string;
+  serialNo: string;
+  brand: string;
+  model: string;
+  purchaseDate: string;
+  purchaseCostINR: number;
+  vendor: string;
+  warrantyExpiry: string;
+  location: string;
+  notes: string;
+  currentAssignee?: {
+    employeeId: string;
+  };
+  assignmentId?: string;
 }
 
 export interface CreateAssetPayload {
-  asset_type: string;
-  asset_name: string;
+  assetType: string;
+  assetName: string;
   brand: string;
   model: string;
-  category: string;
-  serial_no: string;
-  purchase_date: string;
-  purchase_cost_inr: number;
+  assetCategory: string;
+  serialNo: string;
+  purchaseDate: string;
+  purchaseCostINR: number;
   vendor: string;
-  warranty_expiry: string;
+  warrantyExpiry: string;
   location: string;
   notes: string;
 }
