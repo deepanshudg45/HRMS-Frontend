@@ -1,12 +1,15 @@
+import { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { Button, DatePicker, Input, Select, Textarea } from "@/components/ui";
 import { createAsset } from "../api/assetsApi";
 import {
   createAssetSchema,
   CreateAssetFormValues,
 } from "../schema/createAssetSchema";
+import { AuthContext } from "@/context/authContext";
 
 const assetTypeOptions = [
   { label: "Select Type", value: "" },
@@ -28,6 +31,8 @@ const assetCategoryOptions = [
 ];
 
 const CreateAssetForm = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { register, control, handleSubmit, reset } = useForm<CreateAssetFormValues>({
     resolver: zodResolver(createAssetSchema),
@@ -49,9 +54,10 @@ const CreateAssetForm = () => {
 
   const createAssetMutation = useMutation({
     mutationFn: createAsset,
-    onSuccess: () => {
+    onSuccess: (asset) => {
       reset();
       queryClient.invalidateQueries({ queryKey: ["assets"] });
+      navigate(`/app/assets/${asset.id}`);
     },
   });
 
@@ -62,6 +68,10 @@ const CreateAssetForm = () => {
       warrantyExpiry: values.warrantyExpiry.toISOString(),
     });
   };
+
+  if (auth?.role !== "HR") {
+    return null;
+  }
 
   return (
     <div className="rounded border bg-white p-6">

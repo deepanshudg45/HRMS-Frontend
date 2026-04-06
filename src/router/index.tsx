@@ -4,6 +4,7 @@ import RegisterPage from "../pages/registerPage";
 import AppLayout from "../pages/appLayout";
 import ProtectedRoute from "../components/protectedRoute";
 import AssetsDashboard from "../features/assets/pages/AssetsDashboard";
+import AssetDetailPage from "../features/assets/pages/AssetDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "assets",
         element: <AssetsDashboard />,
+      },
+      {
+        path: "assets/:id",
+        element: <AssetDetailPage />,
       },
     ],
   },

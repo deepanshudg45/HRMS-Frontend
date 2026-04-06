@@ -1,5 +1,6 @@
 import { AssetSummary } from "../types/assets.types";
 import AssetStatusBadge from "./AssetStatusBadge";
+import { Link } from "react-router-dom";
 
 interface AssetListTableProps {
   assets: AssetSummary[];
@@ -26,13 +27,17 @@ const AssetListTable = ({ assets }: AssetListTableProps) => {
             <tr key={asset.id} className="border-t">
               <td className="p-3">{asset.code}</td>
               <td className="p-3">{asset.type}</td>
-              <td className="p-3">{asset.name}</td>
+              <td className="p-3">
+                <Link className="text-blue-600 underline" to={`/app/assets/${asset.id}`}>
+                  {asset.name}
+                </Link>
+              </td>
               <td className="p-3">{asset.serialNo || "-"}</td>
               <td className="p-3">
                 <AssetStatusBadge status={asset.status} />
               </td>
               <td className="p-3">{asset.category}</td>
-              <td className="p-3">-</td>
+              <td className="p-3">{asset.assignedToName || "-"}</td>
             </tr>
           ))}
 

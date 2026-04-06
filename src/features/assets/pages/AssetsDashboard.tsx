@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { Input, Pagination, Select } from "@/components/ui";
+import { useContext, useState } from "react";
+import { Button, Input, Pagination, Select } from "@/components/ui";
+import { AuthContext } from "@/context/authContext";
 import AssetListTable from "../components/AssetListTable";
+import AssetListTableSkeleton from "../components/AssetListTableSkeleton";
 import CreateAssetForm from "../components/CreateAssetForm";
 import { useAssets } from "../hooks/useAssets";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 const statusOptions = [
   { label: "All Status", value: "" },
@@ -35,14 +38,17 @@ const categoryOptions = [
 const limit = 10;
 
 const AssetsDashboard = () => {
+  const auth = useContext(AuthContext);
   const [search, setSearch] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebouncedValue(search, 300);
 
   const { data, isLoading } = useAssets({
-    search,
+    search: debouncedSearch,
     status,
     type,
     category,
@@ -50,16 +56,28 @@ const AssetsDashboard = () => {
     limit,
   });
 
-  const assets = data?.data ?? [];
-  const total = data?.meta?.total ?? 0;
+  const assets = data?.data?.data ?? [];
+  const total = data?.data?.meta?.total ?? 0;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Assets Dashboard</h1>
-        <p className="text-sm text-gray-600">
-          Search, filter, and view company assets.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Assets Dashboard</h1>
+          <p className="text-sm text-gray-600">
+            Search, filter, and view company assets.
+          </p>
+        </div>
+
+        {auth?.role === "HR" ? (
+          <Button onClick={() => setShowCreateForm((value) => !value)}>
+            {showCreateForm ? "Hide Create Form" : "Create Asset"}
+          </Button>
+        ) : (
+          <Button disabled variant="secondary">
+            Create Asset
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -105,12 +123,12 @@ const AssetsDashboard = () => {
       </div>
 
       <div className="space-y-4">
-        {isLoading ? <p>Loading assets...</p> : <AssetListTable assets={assets} />}
+        {isLoading ? <AssetListTableSkeleton /> : <AssetListTable assets={assets} />}
 
         <Pagination page={page} total={total} pageSize={limit} onChange={setPage} />
       </div>
 
-      <CreateAssetForm />
+      {showCreateForm && <CreateAssetForm />}
     </div>
   );
 };

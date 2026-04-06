@@ -6,6 +6,8 @@ export interface AssetSummary {
   type: string;
   category: string;
   status: string;
+  location?: string;
+  assignedToName?: string;
 }
 
 export interface AssetFilters {
@@ -15,6 +17,17 @@ export interface AssetFilters {
   category?: string;
   page?: number;
   limit?: number;
+}
+
+export interface AssetsListMeta {
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface AssetsListResponse {
+  data: AssetSummary[];
+  meta: AssetsListMeta;
 }
 
 export interface Asset {
@@ -34,6 +47,9 @@ export interface Asset {
   location: string;
   notes: string;
   currentAssignee?: {
+    name?: string;
+    employeeCode?: string;
+    assignedOn?: string;
     employeeId: string;
   };
   assignmentId?: string;

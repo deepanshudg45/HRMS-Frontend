@@ -3,13 +3,13 @@ import { StandardResponse } from "@/types/api";
 import {
   Asset,
   AssetFilters,
-  AssetSummary,
+  AssetsListResponse,
   CreateAssetPayload,
   UpdateAssetPayload,
 } from "../types/assets.types";
 
 export const getAssets = async (filters: AssetFilters = {}) => {
-  const res = await api.get<StandardResponse<AssetSummary[]>>("/api/v1/assets", {
+  const res = await api.get<StandardResponse<AssetsListResponse>>("/api/v1/assets", {
     params: filters,
   });
 
