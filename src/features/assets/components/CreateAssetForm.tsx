@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button, DatePicker, Input, Select, Textarea } from "@/components/ui";
-import { createAsset } from "../api/assetsApi";
+import { createAsset, getAssets } from "../api/assetsApi";
 import {
   createAssetSchema,
   CreateAssetFormValues,
@@ -54,10 +54,22 @@ const CreateAssetForm = () => {
 
   const createAssetMutation = useMutation({
     mutationFn: createAsset,
-    onSuccess: (asset) => {
+    onSuccess: async (asset) => {
       reset();
       queryClient.invalidateQueries({ queryKey: ["assets"] });
-      navigate(`/app/assets/${asset.id}`);
+
+      if (asset.id) {
+        navigate(`/app/assets/${asset.id}`);
+        return;
+      }
+
+      const assetsResult = await queryClient.fetchQuery({
+        queryKey: ["assets", 1, 1, "", "", "", asset.assetCode],
+        queryFn: () => getAssets({ page: 1, limit: 1, search: asset.assetCode }),
+      });
+
+      const createdAssetId = assetsResult.data?.data[0]?.id;
+      navigate(createdAssetId ? `/app/assets/${createdAssetId}` : "/app/assets");
     },
   });
 

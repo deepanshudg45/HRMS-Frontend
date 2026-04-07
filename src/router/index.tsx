@@ -5,6 +5,7 @@ import AppLayout from "../pages/appLayout";
 import ProtectedRoute from "../components/protectedRoute";
 import AssetsDashboard from "../features/assets/pages/AssetsDashboard";
 import AssetDetailPage from "../features/assets/pages/AssetDetailPage";
+import MyAssetsPage from "../features/assets/pages/MyAssetsPage";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "assets",
         element: <AssetsDashboard />,
+      },
+      {
+        path: "my-assets",
+        element: <MyAssetsPage />,
       },
       {
         path: "assets/:id",

@@ -30,6 +30,84 @@ export interface AssetsListResponse {
   meta: AssetsListMeta;
 }
 
+export interface CreatedAsset {
+  id?: string;
+  assetCode: string;
+  assetName: string;
+  assetType: string;
+  status: string;
+}
+
+export interface MyAsset {
+  assignmentId?: string;
+  assetCode: string;
+  assetType: string;
+  assetName: string;
+  assignedOn: string;
+  acknowledgementStatus: string;
+}
+
+export interface AcknowledgeAssignmentResponse {
+  id: string;
+  employeeId: string;
+  acknowledgementStatus: string;
+  acknowledgedAt: string;
+}
+
+export interface EmployeeOption {
+  id?: string;
+  employeeId?: string;
+  employeeCode?: string;
+  name?: string;
+  email?: string;
+}
+
+export interface AssignAssetPayload {
+  employeeId: string;
+  assignedOn: string;
+  conditionAtAssignment: "GOOD" | "FAIR" | "POOR";
+  notes: string;
+}
+
+export interface AssignAssetResponse {
+  id: string;
+  assetId: string;
+  employeeId: string;
+  assignedOn: string;
+  conditionAtAssignment: string;
+  notes: string;
+  acknowledgementStatus: string;
+  assetStatus: string;
+}
+
+export interface ReturnAssetPayload {
+  returnedOn: string;
+  conditionAtReturn: "GOOD" | "DAMAGED" | "LOST";
+  returnReason: string;
+}
+
+export interface ReturnAssetResponse {
+  assetId: string;
+  assignmentId: string;
+  conditionAtReturn: string;
+  returnReason: string;
+  returnedOn: string;
+  assetStatus: string;
+}
+
+export interface AssetAssignmentHistory {
+  id: string;
+  assetId: string;
+  employeeId: string;
+  employeeName?: string;
+  isActive: boolean;
+  assignedOn: string;
+  conditionAtAssignment?: string;
+  returnedOn?: string;
+  conditionAtReturn?: string;
+  returnReason?: string;
+}
+
 export interface Asset {
   id: string;
   assetCode: string;

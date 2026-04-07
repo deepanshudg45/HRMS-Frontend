@@ -7,12 +7,14 @@ import { queryClient } from "./lib/queryClient";
 import { AuthProvider } from "./context/authContext";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
+import { ToastProvider } from "./components/ui";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
   <AuthProvider>
     <RouterProvider router={router} />
+    <ToastProvider />
   </AuthProvider>
 </QueryClientProvider>
   </StrictMode>,

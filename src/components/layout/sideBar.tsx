@@ -12,6 +12,7 @@ const Sidebar = () => {
     { name: "Onboarding", path: "/app/onboarding" },
     { name: "Expenses", path: "/app/expenses" },
     { name: "Assets", path: "/app/assets" },
+    { name: "My Assets", path: "/app/my-assets" },
   ];
 
   const adminLinks = [{ name: "Admin Panel", path: "/app/admin" }];
