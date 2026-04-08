@@ -15,7 +15,10 @@ const Sidebar = () => {
     { name: "My Assets", path: "/app/my-assets" },
   ];
 
-  const adminLinks = [{ name: "Admin Panel", path: "/app/admin" }];
+  const adminLinks = [
+    { name: "Asset Reports", path: "/app/assets/reports" },
+    { name: "Admin Panel", path: "/app/admin" },
+  ];
 
   return (
     <div className="w-[240px] bg-gray-800 p-4 text-white">

@@ -108,6 +108,78 @@ export interface AssetAssignmentHistory {
   returnReason?: string;
 }
 
+export interface MaintenanceRecord {
+  id: string;
+  assetId: string;
+  maintenanceType: string;
+  description: string;
+  sentForRepairAt: string;
+  vendor: string;
+  notes: string;
+  maintStatus: "IN_PROGRESS" | "COMPLETED" | "SCRAPPED";
+  returnedFromRepairAt: string;
+  repairCostINR: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMaintenancePayload {
+  maintenanceType: string;
+  description: string;
+  sentForRepairAt: string;
+  vendor: string;
+}
+
+export interface UpdateMaintenancePayload {
+  status: "IN_PROGRESS" | "COMPLETED" | "SCRAPPED";
+  returnedFromRepairAt: string;
+  repairCostINR: number;
+  vendor: string;
+  notes: string;
+}
+
+export interface ImportRowError {
+  row: number;
+  reason: string;
+}
+
+export interface ImportResult {
+  imported: number;
+  skipped: number;
+  errors: ImportRowError[];
+}
+
+export interface AssetReport {
+  id: string;
+  assetCode: string;
+  assetName: string;
+  assetType: string;
+  category: string;
+  status: string;
+  serialNo: string;
+  location: string;
+  vendor: string;
+  createdAt: string;
+  warrantyExpiry?: string;
+}
+
+export interface AssetReportFilters {
+  type?: string;
+  category?: string;
+  status?: string;
+}
+
+export interface UpdateAssetStatusPayload {
+  status: "RETIRED" | "LOST";
+}
+
+export interface AssetStatusUpdateResponse {
+  assetCode: string;
+  assetName: string;
+  assetType: string;
+  status: string;
+}
+
 export interface Asset {
   id: string;
   assetCode: string;

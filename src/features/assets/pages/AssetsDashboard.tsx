@@ -4,6 +4,7 @@ import { AuthContext } from "@/context/authContext";
 import AssetListTable from "../components/AssetListTable";
 import AssetListTableSkeleton from "../components/AssetListTableSkeleton";
 import CreateAssetForm from "../components/CreateAssetForm";
+import CsvImportPanel from "../components/CsvImportPanel";
 import { useAssets } from "../hooks/useAssets";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
@@ -41,6 +42,7 @@ const AssetsDashboard = () => {
   const auth = useContext(AuthContext);
   const [search, setSearch] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showImportPanel, setShowImportPanel] = useState(false);
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
@@ -70,9 +72,14 @@ const AssetsDashboard = () => {
         </div>
 
         {auth?.role === "HR" ? (
-          <Button onClick={() => setShowCreateForm((value) => !value)}>
-            {showCreateForm ? "Hide Create Form" : "Create Asset"}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCreateForm((value) => !value)}>
+              {showCreateForm ? "Hide Create Form" : "Create Asset"}
+            </Button>
+            <Button variant="secondary" onClick={() => setShowImportPanel((value) => !value)}>
+              {showImportPanel ? "Hide Import" : "Import CSV"}
+            </Button>
+          </div>
         ) : (
           <Button disabled variant="secondary">
             Create Asset
@@ -129,6 +136,7 @@ const AssetsDashboard = () => {
       </div>
 
       {showCreateForm && <CreateAssetForm />}
+      {showImportPanel && auth?.role === "HR" && <CsvImportPanel />}
     </div>
   );
 };

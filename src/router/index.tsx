@@ -6,6 +6,7 @@ import ProtectedRoute from "../components/protectedRoute";
 import AssetsDashboard from "../features/assets/pages/AssetsDashboard";
 import AssetDetailPage from "../features/assets/pages/AssetDetailPage";
 import MyAssetsPage from "../features/assets/pages/MyAssetsPage";
+import AssetReportsPage from "../features/assets/pages/AssetReportsPage";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "my-assets",
         element: <MyAssetsPage />,
+      },
+      {
+        path: "assets/reports",
+        element: <AssetReportsPage />,
       },
       {
         path: "assets/:id",

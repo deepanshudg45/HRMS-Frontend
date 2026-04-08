@@ -9,6 +9,8 @@ import AssetAssignmentModal from "../components/AssetAssignmentModal";
 import AssetAssignmentHistory from "../components/AssetAssignmentHistory";
 import AssetReturnModal from "../components/AssetReturnModal";
 import EditAssetForm from "../components/EditAssetForm";
+import MaintenancePage from "../components/MaintenancePage";
+import ChangeStatusModal from "../components/ChangeStatusModal";
 
 const AssetDetailPage = () => {
   const { id = "" } = useParams();
@@ -16,7 +18,10 @@ const AssetDetailPage = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"details" | "history">("details");
+  const [isChangeStatusModalOpen, setIsChangeStatusModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"details" | "history" | "maintenance">(
+    "details"
+  );
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["asset", id],
@@ -71,7 +76,9 @@ const AssetDetailPage = () => {
                   Return
                 </Button>
               )}
-              <Button>Change Status</Button>
+              <Button onClick={() => setIsChangeStatusModalOpen(true)}>
+                Change Status
+              </Button>
             </>
           )}
         </div>
@@ -90,6 +97,14 @@ const AssetDetailPage = () => {
           asset={asset}
           open={isReturnModalOpen}
           onClose={() => setIsReturnModalOpen(false)}
+        />
+      )}
+
+      {auth?.role === "HR" && (
+        <ChangeStatusModal
+          asset={asset}
+          open={isChangeStatusModalOpen}
+          onClose={() => setIsChangeStatusModalOpen(false)}
         />
       )}
 
@@ -112,6 +127,15 @@ const AssetDetailPage = () => {
         >
           Assignment History
         </button>
+        {auth?.role === "HR" && (
+          <button
+            type="button"
+            className={`px-4 py-2 ${activeTab === "maintenance" ? "border-b-2 border-blue-600 font-semibold" : ""}`}
+            onClick={() => setActiveTab("maintenance")}
+          >
+            Maintenance
+          </button>
+        )}
       </div>
 
       {activeTab === "details" && (
@@ -151,6 +175,10 @@ const AssetDetailPage = () => {
 
       {activeTab === "history" && (
         <AssetAssignmentHistory assetId={asset.id} />
+      )}
+
+      {activeTab === "maintenance" && auth?.role === "HR" && (
+        <MaintenancePage asset={asset} />
       )}
     </div>
   );

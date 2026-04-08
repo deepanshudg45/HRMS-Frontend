@@ -14,6 +14,14 @@ import {
   AssetAssignmentHistory,
   ReturnAssetPayload,
   ReturnAssetResponse,
+  CreateMaintenancePayload,
+  ImportResult,
+  MaintenanceRecord,
+  UpdateMaintenancePayload,
+  AssetReport,
+  AssetReportFilters,
+  AssetStatusUpdateResponse,
+  UpdateAssetStatusPayload,
   UpdateAssetPayload,
 } from "../types/assets.types";
 
@@ -101,6 +109,62 @@ export const returnAsset = async (assetId: string, data: ReturnAssetPayload) => 
 export const getAssetAssignmentHistory = async (assetId: string) => {
   const res = await api.get<AssetAssignmentHistory[]>(
     `/api/v1/assets/${assetId}/assignments`
+  );
+  return res.data;
+};
+
+export const getAssetMaintenanceRecords = async (assetId: string) => {
+  const res = await api.get<MaintenanceRecord[]>(
+    `/api/v1/assets/${assetId}/maintenance`
+  );
+  return res.data;
+};
+
+export const createMaintenanceRecord = async (
+  assetId: string,
+  data: CreateMaintenancePayload
+) => {
+  const res = await api.post<MaintenanceRecord>(
+    `/api/v1/assets/${assetId}/maintenance`,
+    data
+  );
+  return res.data;
+};
+
+export const updateMaintenanceRecord = async (
+  assetId: string,
+  maintenanceId: string,
+  data: UpdateMaintenancePayload
+) => {
+  const res = await api.patch<MaintenanceRecord>(
+    `/api/v1/assets/${assetId}/maintenance/${maintenanceId}`,
+    data
+  );
+  return res.data;
+};
+
+export const importAssets = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post<ImportResult>("/api/v1/assets/import", formData);
+  return res.data;
+};
+
+export const getAssetReports = async (filters: AssetReportFilters = {}) => {
+  const res = await api.get<AssetReport[]>("/api/v1/assets/admin/reports", {
+    params: filters,
+  });
+  return res.data;
+};
+
+export const updateAssetStatus = async (
+  assetId: string,
+  data: UpdateAssetStatusPayload
+) => {
+  const res = await api.patch<AssetStatusUpdateResponse>(
+    `/api/v1/assets/${assetId}/status`,
+    data
   );
   return res.data;
 };
