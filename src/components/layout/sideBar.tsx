@@ -7,10 +7,6 @@ const Sidebar = () => {
   const location = useLocation();
 
   const links = [
-    { name: "Attendance", path: "/app/attendance" },
-    { name: "Leave", path: "/app/leave" },
-    { name: "Onboarding", path: "/app/onboarding" },
-    { name: "Expenses", path: "/app/expenses" },
     { name: "Assets", path: "/app/assets" },
     { name: "My Assets", path: "/app/my-assets" },
   ];
@@ -21,14 +17,20 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-[240px] bg-gray-800 p-4 text-white">
-      <h2 className="mb-4">Logo</h2>
+    <div className="w-[260px] border-r border-blue-100 bg-white p-5 text-slate-700">
+      <div className="mb-8 px-2">
+        <h2 className="text-2xl font-semibold text-slate-800">HRMS</h2>
+      </div>
 
       {links.map((link) => (
         <Link
           key={link.path}
           to={link.path}
-          className={`block p-2 ${location.pathname === link.path ? "bg-gray-600" : ""}`}
+          className={`mb-1 block rounded-xl px-4 py-3 text-left text-base font-semibold transition ${
+            location.pathname === link.path
+              ? "bg-blue-50 text-blue-700"
+              : "text-slate-800 hover:bg-blue-50 hover:text-blue-700"
+          }`}
         >
           {link.name}
         </Link>
@@ -36,7 +38,15 @@ const Sidebar = () => {
 
       {auth?.role === "HR" &&
         adminLinks.map((link) => (
-          <Link key={link.path} to={link.path} className="block p-2">
+          <Link
+            key={link.path}
+            to={link.path}
+            className={`mb-1 block rounded-xl px-4 py-3 text-left text-base font-semibold transition ${
+              location.pathname === link.path
+                ? "bg-blue-50 text-blue-700"
+                : "text-slate-800 hover:bg-blue-50 hover:text-blue-700"
+            }`}
+          >
             {link.name}
           </Link>
         ))}

@@ -37,8 +37,8 @@ const MyAssetsPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">My Assets</h1>
-        <p className="text-sm text-gray-600">
+        <h1 className="text-3xl font-bold text-slate-900">My Assets</h1>
+        <p className="mt-2 text-base font-medium text-slate-700">
           View and acknowledge assets assigned to you.
         </p>
       </div>

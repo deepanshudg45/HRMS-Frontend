@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Button, DatePicker, Input, Select, Textarea } from "@/components/ui";
+import { Button, Input, Select, Textarea } from "@/components/ui";
 import { createAsset, getAssets } from "../api/assetsApi";
 import {
   createAssetSchema,
@@ -34,7 +34,7 @@ const CreateAssetForm = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { register, control, handleSubmit, reset } = useForm<CreateAssetFormValues>({
+  const { register, handleSubmit, reset } = useForm<CreateAssetFormValues>({
     resolver: zodResolver(createAssetSchema),
     defaultValues: {
       assetType: "",
@@ -43,10 +43,10 @@ const CreateAssetForm = () => {
       model: "",
       assetCategory: "",
       serialNo: "",
-      purchaseDate: new Date(),
+      purchaseDate: "",
       purchaseCostINR: 0,
       vendor: "",
-      warrantyExpiry: new Date(),
+      warrantyExpiry: "",
       location: "",
       notes: "",
     },
@@ -74,11 +74,7 @@ const CreateAssetForm = () => {
   });
 
   const onSubmit = (values: CreateAssetFormValues) => {
-    createAssetMutation.mutate({
-      ...values,
-      purchaseDate: values.purchaseDate.toISOString(),
-      warrantyExpiry: values.warrantyExpiry.toISOString(),
-    });
+    createAssetMutation.mutate(values);
   };
 
   if (auth?.role !== "HR") {
@@ -100,32 +96,14 @@ const CreateAssetForm = () => {
           {...register("assetCategory")}
         />
         <Input label="Serial No" {...register("serialNo")} />
-        <div>
-          <label className="mb-2 block">Purchase Date</label>
-          <Controller
-            control={control}
-            name="purchaseDate"
-            render={({ field }) => (
-              <DatePicker value={field.value} onChange={field.onChange} />
-            )}
-          />
-        </div>
+        <Input label="Purchase Date" type="date" {...register("purchaseDate")} />
         <Input
           label="Purchase Cost INR"
           type="number"
           {...register("purchaseCostINR", { valueAsNumber: true })}
         />
         <Input label="Vendor" {...register("vendor")} />
-        <div>
-          <label className="mb-2 block">Warranty Expiry</label>
-          <Controller
-            control={control}
-            name="warrantyExpiry"
-            render={({ field }) => (
-              <DatePicker value={field.value} onChange={field.onChange} />
-            )}
-          />
-        </div>
+        <Input label="Warranty Expiry" type="date" {...register("warrantyExpiry")} />
         <Input label="Location" {...register("location")} />
         <div className="md:col-span-2">
           <Textarea label="Notes" {...register("notes")} />

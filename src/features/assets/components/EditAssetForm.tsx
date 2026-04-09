@@ -1,8 +1,8 @@
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Button, DatePicker, Input, Select, Textarea } from "@/components/ui";
+import { Button, Input, Select, Textarea } from "@/components/ui";
 import { updateAsset } from "../api/assetsApi";
 import { Asset } from "../types/assets.types";
 import {
@@ -35,13 +35,13 @@ const assetCategoryOptions = [
 ];
 
 const toDate = (value: string) => {
-  return value ? new Date(value) : new Date();
+  return value ? value.split("T")[0] : "";
 };
 
 const EditAssetForm = ({ asset, onUpdated }: EditAssetFormProps) => {
   const isRetired = asset.status === "RETIRED";
 
-  const { register, control, handleSubmit } = useForm<CreateAssetFormValues>({
+  const { register, handleSubmit } = useForm<CreateAssetFormValues>({
     resolver: zodResolver(createAssetSchema),
     defaultValues: {
       assetType: asset.assetType,
@@ -61,11 +61,7 @@ const EditAssetForm = ({ asset, onUpdated }: EditAssetFormProps) => {
 
   const updateAssetMutation = useMutation({
     mutationFn: (values: CreateAssetFormValues) =>
-      updateAsset(asset.id, {
-        ...values,
-        purchaseDate: values.purchaseDate.toISOString(),
-        warrantyExpiry: values.warrantyExpiry.toISOString(),
-      }),
+      updateAsset(asset.id, values),
     onSuccess: () => {
       toast.success("Asset updated successfully");
       onUpdated();
@@ -98,32 +94,14 @@ const EditAssetForm = ({ asset, onUpdated }: EditAssetFormProps) => {
             {...register("assetCategory")}
           />
           <Input label="Serial No" {...register("serialNo")} />
-          <div>
-            <label className="mb-2 block">Purchase Date</label>
-            <Controller
-              control={control}
-              name="purchaseDate"
-              render={({ field }) => (
-                <DatePicker value={field.value} onChange={field.onChange} />
-              )}
-            />
-          </div>
+          <Input label="Purchase Date" type="date" {...register("purchaseDate")} />
           <Input
             label="Purchase Cost INR"
             type="number"
             {...register("purchaseCostINR", { valueAsNumber: true })}
           />
           <Input label="Vendor" {...register("vendor")} />
-          <div>
-            <label className="mb-2 block">Warranty Expiry</label>
-            <Controller
-              control={control}
-              name="warrantyExpiry"
-              render={({ field }) => (
-                <DatePicker value={field.value} onChange={field.onChange} />
-              )}
-            />
-          </div>
+          <Input label="Warranty Expiry" type="date" {...register("warrantyExpiry")} />
           <Input label="Location" {...register("location")} />
           <div className="md:col-span-2">
             <Textarea label="Notes" {...register("notes")} />

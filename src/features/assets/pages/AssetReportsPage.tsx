@@ -91,8 +91,10 @@ const AssetReportsPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Asset Reports</h1>
-        <p className="text-sm text-gray-600">Review asset status and warranty risk.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Asset Reports</h1>
+        <p className="mt-2 text-base font-medium text-slate-700">
+          Review asset status and warranty risk.
+        </p>
       </div>
 
       <div className="grid gap-4 rounded border bg-white p-4 md:grid-cols-5">

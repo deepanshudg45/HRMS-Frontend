@@ -7,10 +7,10 @@ export const createAssetSchema = z.object({
   model: z.string(),
   assetCategory: z.string().min(1),
   serialNo: z.string(),
-  purchaseDate: z.date(),
+  purchaseDate: z.string().min(1),
   purchaseCostINR: z.number(),
   vendor: z.string().min(1),
-  warrantyExpiry: z.date(),
+  warrantyExpiry: z.string().min(1),
   location: z.string().min(1),
   notes: z.string(),
 });
