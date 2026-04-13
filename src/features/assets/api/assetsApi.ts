@@ -8,7 +8,6 @@ import {
   AssignAssetResponse,
   CreateAssetPayload,
   CreatedAsset,
-  EmployeeOption,
   MyAsset,
   AcknowledgeAssignmentResponse,
   AssetAssignmentHistory,
@@ -66,13 +65,6 @@ export const getAssets = async (filters: AssetFilters = {}) => {
 export const getAsset = async (id: string) => {
   const res = await api.get<StandardResponse<Asset>>(`/api/v1/assets/${id}`);
   return res.data;
-};
-
-export const searchEmployees = async (search: string) => {
-  const res = await api.get<StandardResponse<EmployeeOption[]>>("/users", {
-    params: { search },
-  });
-  return res.data.data ?? [];
 };
 
 export const getMyAssets = async () => {

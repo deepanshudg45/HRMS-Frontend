@@ -152,16 +152,10 @@ const AssetDetailPage = () => {
           {asset.status === "ASSIGNED" && asset.currentAssignee && (
             <div className="rounded border bg-white p-6">
               <h2 className="mb-4 text-lg font-semibold">Current Assignee</h2>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">{asset.currentAssignee.name || "-"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Employee Code</p>
-                  <p className="font-medium">
-                    {asset.currentAssignee.employeeCode || asset.currentAssignee.employeeId}
-                  </p>
+                  <p className="text-sm text-gray-500">Employee ID</p>
+                  <p className="font-medium">{asset.currentAssignee.employeeId}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Assigned On</p>

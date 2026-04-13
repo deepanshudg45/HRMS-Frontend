@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Use a browser-reachable backend URL for local testing.
+        # The backend from WITS is exposed on localhost:3001.
+        VITE_API_URL: http://localhost:3001
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+#   hrms-network:
+#     external: true

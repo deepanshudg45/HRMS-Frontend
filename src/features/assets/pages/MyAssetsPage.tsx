@@ -29,6 +29,7 @@ const MyAssetsPage = () => {
   };
 
   const myAssets = data ?? [];
+  const canAcknowledgeAnyAsset = myAssets.some((asset) => Boolean(asset.assignmentId));
 
   if (isLoading) {
     return <p>Loading my assets...</p>;
@@ -42,6 +43,13 @@ const MyAssetsPage = () => {
           View and acknowledge assets assigned to you.
         </p>
       </div>
+
+      {!canAcknowledgeAnyAsset && myAssets.length > 0 && (
+        <div className="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          The current backend response for `/api/v1/assets/my` does not include `assignmentId`,
+          so acknowledge actions stay disabled until that field is returned.
+        </div>
+      )}
 
       <div className="overflow-x-auto rounded border bg-white">
         <table className="min-w-full border-collapse">

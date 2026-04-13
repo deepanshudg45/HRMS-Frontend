@@ -1,15 +1,9 @@
-import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, DatePicker, Input, Modal, Select, Textarea } from "@/components/ui";
 import { StandardResponse } from "@/types/api";
-import { assignAsset, searchEmployees } from "../api/assetsApi";
-import { useDebouncedValue } from "../hooks/useDebouncedValue";
-import {
-  Asset,
-  AssignAssetPayload,
-  EmployeeOption,
-} from "../types/assets.types";
+import { assignAsset } from "../api/assetsApi";
+import { Asset, AssignAssetPayload } from "../types/assets.types";
 
 interface AssetAssignmentModalProps {
   asset: Asset;
@@ -30,42 +24,17 @@ const conditionOptions = [
   { label: "Poor", value: "POOR" },
 ];
 
-const getEmployeeId = (employee: EmployeeOption) => {
-  return employee.employeeId || employee.id || "";
-};
-
-const getEmployeeLabel = (employee: EmployeeOption) => {
-  const employeeCode = employee.employeeCode || employee.employeeId || employee.id || "";
-  const name = employee.name || employee.email || "Employee";
-
-  return employeeCode ? `${name} (${employeeCode})` : name;
-};
-
 const AssetAssignmentModal = ({ asset, open, onClose }: AssetAssignmentModalProps) => {
   const queryClient = useQueryClient();
-  const [employeeSearch, setEmployeeSearch] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeOption | null>(null);
-  const debouncedEmployeeSearch = useDebouncedValue(employeeSearch, 300);
 
-  const { control, handleSubmit, register, reset, setValue } =
-    useForm<AssignmentFormValues>({
-      defaultValues: {
-        employeeId: "",
-        assignedOn: new Date(),
-        conditionAtAssignment: "GOOD",
-        notes: "",
-      },
-    });
-
-  const { data: employees = [], isLoading: isLoadingEmployees } = useQuery({
-    queryKey: ["employees", debouncedEmployeeSearch],
-    queryFn: () => searchEmployees(debouncedEmployeeSearch),
-    enabled: open && debouncedEmployeeSearch.length > 0,
+  const { control, handleSubmit, register, reset } = useForm<AssignmentFormValues>({
+    defaultValues: {
+      employeeId: "",
+      assignedOn: new Date(),
+      conditionAtAssignment: "GOOD",
+      notes: "",
+    },
   });
-
-  const selectedEmployeeName = useMemo(() => {
-    return selectedEmployee ? getEmployeeLabel(selectedEmployee) : "";
-  }, [selectedEmployee]);
 
   const assignAssetMutation = useMutation({
     mutationFn: (values: AssignAssetPayload) => assignAsset(asset.id, values),
@@ -83,8 +52,6 @@ const AssetAssignmentModal = ({ asset, open, onClose }: AssetAssignmentModalProp
             assignmentId: assignment?.id || oldData.data.assignmentId,
             currentAssignee: {
               employeeId: values.employeeId,
-              employeeCode: selectedEmployee?.employeeCode || values.employeeId,
-              name: selectedEmployee?.name || selectedEmployee?.email || values.employeeId,
               assignedOn: assignment?.assignedOn || values.assignedOn,
             },
           },
@@ -94,19 +61,9 @@ const AssetAssignmentModal = ({ asset, open, onClose }: AssetAssignmentModalProp
       queryClient.invalidateQueries({ queryKey: ["assets"] });
       queryClient.invalidateQueries({ queryKey: ["asset-assignments", asset.id] });
       reset();
-      setEmployeeSearch("");
-      setSelectedEmployee(null);
       onClose();
     },
   });
-
-  const handleEmployeeSelect = (employee: EmployeeOption) => {
-    const employeeId = getEmployeeId(employee);
-
-    setSelectedEmployee(employee);
-    setEmployeeSearch(getEmployeeLabel(employee));
-    setValue("employeeId", employeeId);
-  };
 
   const onSubmit = (values: AssignmentFormValues) => {
     assignAssetMutation.mutate({
@@ -133,47 +90,14 @@ const AssetAssignmentModal = ({ asset, open, onClose }: AssetAssignmentModalProp
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <Input
-              label="Search Employee"
-              placeholder="Type employee name, code, or email"
-              value={employeeSearch}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setEmployeeSearch(event.target.value);
-                setSelectedEmployee(null);
-                setValue("employeeId", "");
-              }}
+              label="Employee ID"
+              placeholder="Enter employee ID from the backend system"
+              {...register("employeeId", { required: true })}
             />
-
-            {employeeSearch && !selectedEmployee && (
-              <div className="mt-2 rounded border bg-white">
-                {isLoadingEmployees && (
-                  <p className="p-3 text-sm text-gray-500">Searching employees...</p>
-                )}
-
-                {!isLoadingEmployees &&
-                  employees.map((employee) => (
-                    <button
-                      key={getEmployeeId(employee)}
-                      type="button"
-                      className="block w-full border-b p-3 text-left hover:bg-gray-50"
-                      onClick={() => handleEmployeeSelect(employee)}
-                    >
-                      {getEmployeeLabel(employee)}
-                    </button>
-                  ))}
-
-                {!isLoadingEmployees && employees.length === 0 && (
-                  <p className="p-3 text-sm text-gray-500">No employees found.</p>
-                )}
-              </div>
-            )}
-
-            {selectedEmployeeName && (
-              <p className="mt-2 text-sm text-green-700">
-                Selected: {selectedEmployeeName}
-              </p>
-            )}
-
-            <input type="hidden" {...register("employeeId", { required: true })} />
+            <p className="mt-2 text-sm text-gray-500">
+              The current WITS backend accepts an `employeeId` header/body value, but it does
+              not expose an employee search endpoint yet.
+            </p>
           </div>
 
           <div>
@@ -195,7 +119,7 @@ const AssetAssignmentModal = ({ asset, open, onClose }: AssetAssignmentModalProp
 
           <Textarea label="Notes" {...register("notes")} />
 
-          <Button type="submit" disabled={!selectedEmployee || assignAssetMutation.isPending}>
+          <Button type="submit" disabled={assignAssetMutation.isPending}>
             {assignAssetMutation.isPending ? "Assigning..." : "Assign Asset"}
           </Button>
         </form>

@@ -54,14 +54,6 @@ export interface AcknowledgeAssignmentResponse {
   acknowledgedAt: string;
 }
 
-export interface EmployeeOption {
-  id?: string;
-  employeeId?: string;
-  employeeCode?: string;
-  name?: string;
-  email?: string;
-}
-
 export interface AssignAssetPayload {
   employeeId: string;
   assignedOn: string;
@@ -197,8 +189,6 @@ export interface Asset {
   location: string;
   notes: string;
   currentAssignee?: {
-    name?: string;
-    employeeCode?: string;
     assignedOn?: string;
     employeeId: string;
   };
